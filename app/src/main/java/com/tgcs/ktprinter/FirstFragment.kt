@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.tgcs.ktprinter.databinding.FragmentFirstBinding
+import kotlinx.coroutines.*
+import java.lang.Exception
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -13,7 +15,7 @@ import com.tgcs.ktprinter.databinding.FragmentFirstBinding
 class FirstFragment : Fragment() {
 
     private val printer: EcpPrinter
-
+    private val scope = CoroutineScope(SupervisorJob())
     private var _binding: FragmentFirstBinding? = null
 
     // This property is only valid between onCreateView and
@@ -21,8 +23,8 @@ class FirstFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
 
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
@@ -43,11 +45,22 @@ class FirstFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        val scope = CoroutineScope(SupervisorJob())
         binding.buttonFirst.setOnClickListener {
 
-            printer.line("Printed with Kotlin!")
-            printer.cut()
+            scope.launch {
+                for (i in 1..1000) {
+                    try {
+                        println("Status: " + printer.pollStatus())
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                    delay(5)
+                }
+            }
+
+//            printer.line("Printed with Kotlin!")
+//            printer.cut()
 
         }
     }

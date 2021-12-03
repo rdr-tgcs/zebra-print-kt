@@ -27,6 +27,10 @@ class ZebraPrinterImpl(private val options: Map<String, String>) : EcpPrinter {
         }
     }
 
+    override fun pollStatus(): Boolean {
+        return linkOsPrinter.currentStatus.isReadyToPrint
+    }
+
     override fun line(text: String) {
 
         val printerLanguage = printer.printerControlLanguage
